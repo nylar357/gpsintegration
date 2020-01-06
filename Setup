@@ -1,0 +1,50 @@
+Install Kismet & GPS Dependencies
+
+In order to get everything working, we have two options. The version of Kismet in the Kali Rolling repo is not the newest, but if you're lazy and want to get right to it you can type the following to install the older Kali Rolling version.
+
+    apt-get install kismet
+
+If you'd like the newest version, it will require several dependencies to be updated beyond what they are in the Kali repo as well (such as libpcap). To try downloading the newest version, you can run the following in terminal.
+
+    git clone https://github.com/kismetwireless/kismet.git
+    git clone https://github.com/the-tcpdump-group/libpcap.git
+    sudo apt-get install screen gpsd ncurses-dev libpcap-dev tcpdump libmicrohttpd-dev flex byacc
+    cd libpcap
+    ./configure
+    make
+    sudo make install
+    cd
+    cd kismet
+    ./configure
+    make
+    sudo make install
+
+The new version got stuck on a lot of dependencies for me, but I added everything my Kali Pi needed to update in the example above. If you get stuck on any dependencies, use the apt-get workaround for now. Just type apt-get install and then the name of any dependencies required to try installing them.
+Step 2Acquire a Location Data Fix
+
+Plug in your USB GPS dongle, then type lsusb to show a list of attached USB devices. You should see something like:
+
+Bus 001 Device 006: ID 067b:2303 Prolific Technology, Inc. PL2303 Serial Port
+
+If you see that, your GPS unit is being detected. To find the name of the GPS path, type:
+
+    dmesg | grep tty
+
+Theres multiple methods to see if your GPS device is kicking back the correct data,refer to my pictures for 
+the easiest methods.  First would be a app included with Kali, xgps, this will give you our overhead sattelite
+map.  Showing you your device is definately working.  Or pass it in your terminal, as well as sgps which is
+the actual application used for integrating into Kismet
+  
+  xgps
+  sgps
+  
+You should see your device as something like "ttyUSB0." This is the name we'll use to start it in the next command. Let's start and test our GPS by typing:
+
+    gpsd /dev/ttyUSB0
+    cgps
+
+If you're successful, you should see a GPS fix in a few seconds.
+Data from a successful GPS connection.
+Step 3Start Kismet & Confirm GPS Signal
+
+Log into your Kali Pi via SSH. If you need help with this, we cover it in my previous Kali Pi tutorial.
